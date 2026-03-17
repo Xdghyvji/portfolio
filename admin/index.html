@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MA Command Center | Mubashir Arham</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Firebase Imports & Core Admin Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc,
+            getDoc,
+            setDoc,
+            enableIndexedDbPersistence 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Configuration (Portfolio-8e083)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAJkblVV3jToAZ2FjLMhKUXY8HT7o7zQHY",
+            authDomain: "portfolio-8e083.firebaseapp.com",
+            projectId: "portfolio-8e083",
+            storageBucket: "portfolio-8e083.firebasestorage.app",
+            messagingSenderId: "473586363516",
+            appId: "1:473586363516:web:d7b9db91eba86f8809adf9",
+            measurementId: "G-P25VB35JSM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // ENABLE OFFLINE PERSISTENCE
+        enableIndexedDbPersistence(db).catch((err) => {
+            if (err.code == 'failed-precondition') {
+                console.warn("Persistence failed: Multiple tabs open.");
+            } else if (err.code == 'unimplemented') {
+                console.warn("Persistence failed: Browser not supported.");
+            }
+        });
+
+        const ADMIN_EMAIL = "mubashirarham12@gmail.com";
+
+        // Security Guard: Role-Based Access with Offline Failsafe
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = '../login.html'; 
+            } else {
+                console.log("Auth verified for:", user.email);
+
+                // FAILSAFE & SELF-HEALING: If primary admin, bypass checks but also ensure DB record exists
+                if (user.email === ADMIN_EMAIL) {
+                    console.log("Primary Admin recognized. Provisioning session...");
+                    
+                    // Run a background provision to ensure permissions are registered in Firestore
+                    provisionAdminRecord(user);
+                    
+                    handleAccessGranted(user.email);
+                    return;
+                }
+
+                try {
+                    const userDocRef = doc(db, "users", user.uid);
+                    const userDoc = await getDoc(userDocRef);
+                    
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        const role = (userData.role || '').toLowerCase();
+                        
+                        if (role === 'admin') {
+                            handleAccessGranted(user.email);
+                        } else {
+                            alert("Access Denied: Admin privileges required.");
+                            window.location.href = '../index.html';
+                        }
+                    } else {
+                        alert("Access Denied: Authorization profile not found.");
+                        window.location.href = '../index.html';
+                    }
+                } catch (error) {
+                    console.error("Admin verification failed:", error);
+                    
+                    if (error.code === 'permission-denied') {
+                        document.getElementById('loading-screen').innerHTML = `
+                            <div class="text-center p-6 max-w-md">
+                                <i class="fa-solid fa-lock text-rose-500 text-4xl mb-4"></i>
+                                <p class="text-white font-bold">Firestore Permission Denied</p>
+                                <p class="text-slate-500 text-xs mt-2 leading-relaxed">Your account is authenticated, but your Firestore Database Rules are blocking access. Please update your Rules in the Firebase Console.</p>
+                                <button onclick="location.reload()" class="mt-6 px-6 py-2 bg-ma-indigo rounded-lg text-xs font-bold uppercase tracking-widest">Retry Link</button>
+                            </div>`;
+                    } else if (error.code === 'unavailable' || error.message.includes('offline')) {
+                        document.getElementById('loading-screen').innerHTML = `
+                            <div class="text-center p-6">
+                                <i class="fa-solid fa-wifi text-amber-500 text-4xl mb-4"></i>
+                                <p class="text-white font-bold">Network Connectivity Issue</p>
+                                <p class="text-slate-500 text-sm mt-2">The system is struggling to reach the database.</p>
+                                <button onclick="location.reload()" class="mt-4 px-6 py-2 bg-ma-indigo rounded-lg text-xs font-bold uppercase tracking-widest">Retry Connection</button>
+                            </div>`;
+                    }
+                }
+            }
+        });
+
+        // Background task to ensure the admin document exists so modules don't crash
+        async function provisionAdminRecord(user) {
+            try {
+                const userDocRef = doc(db, "users", user.uid);
+                await setDoc(userDocRef, {
+                    email: user.email,
+                    role: 'admin',
+                    displayName: 'Mubashir Arham',
+                    isVerified: true,
+                    lastActive: new Date()
+                }, { merge: true });
+                console.log("Admin node synchronized successfully.");
+            } catch (e) {
+                console.warn("Background provisioning delayed by permissions. Check your Firestore Rules.");
+            }
+        }
+
+        function handleAccessGranted(email) {
+            document.getElementById('admin-email').innerText = email;
+            document.getElementById('loading-screen').classList.add('opacity-0');
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('hidden');
+                loadSection('dashboard');
+            }, 500);
+        }
+
+        window.handleSignOut = () => {
+            signOut(auth).then(() => { window.location.href = '../index.html'; });
+        };
+
+        window.loadSection = (sectionName) => {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('bg-indigo-500/10', 'text-indigo-400', 'border-r-2', 'border-indigo-500');
+                el.classList.add('text-slate-400', 'hover:text-white');
+            });
+            const activeLink = document.getElementById(`nav-${sectionName}`);
+            if(activeLink) {
+                activeLink.classList.add('bg-indigo-500/10', 'text-indigo-400', 'border-r-2', 'border-indigo-500');
+                activeLink.classList.remove('text-slate-400', 'hover:text-white');
+            }
+
+            document.getElementById('page-title').innerText = sectionName.charAt(0).toUpperCase() + sectionName.slice(1).replace('-', ' ') + " View";
+            
+            const event = new CustomEvent('admin-section-load', { detail: { section: sectionName } });
+            window.dispatchEvent(event);
+        };
+    </script>
+
+    <!-- Tailwind & Theme Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Lexend', 'sans-serif']
+                    },
+                    colors: {
+                        'ma-dark': '#020617',
+                        'ma-slate': '#0f172a',
+                        'ma-surface': '#1e293b',
+                        'ma-indigo': '#6366f1',
+                        'ma-emerald': '#10b981',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-display { font-family: 'Lexend', sans-serif; }
+        .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #020617; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .nav-item { cursor: pointer; transition: all 0.2s ease; }
+    </style>
+</head>
+<body class="min-h-screen flex overflow-hidden">
+
+    <!-- Startup Screen (MA Premium Edition) -->
+    <div id="loading-screen" class="fixed inset-0 z-[100] bg-ma-dark flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="relative flex items-center justify-center mb-10">
+            <div class="absolute w-40 h-40 border-t-2 border-ma-indigo/40 rounded-full animate-spin"></div>
+            <div class="absolute w-32 h-32 border border-ma-emerald/20 rounded-full animate-pulse"></div>
+            <div class="relative w-20 h-20 bg-ma-slate rounded-3xl border border-white/10 flex items-center justify-center shadow-2xl shadow-ma-indigo/20">
+                <span class="text-3xl font-bold tracking-tighter text-white">MA</span>
+            </div>
+        </div>
+        <div class="text-center">
+            <h2 class="font-display font-bold text-xl text-white tracking-wider mb-1 uppercase">MA_Control_Center</h2>
+            <div class="flex items-center gap-1.5 justify-center mb-6">
+                <div class="w-1.5 h-1.5 bg-ma-indigo rounded-full animate-bounce" style="animation-delay: 0s"></div>
+                <div class="w-1.5 h-1.5 bg-ma-indigo rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                <div class="w-1.5 h-1.5 bg-ma-emerald rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+            </div>
+            <div class="bg-ma-surface px-4 py-2 rounded-lg border border-white/5 inline-block">
+                <p class="font-mono text-[10px] text-slate-400 tracking-widest uppercase animate-pulse">Establishing Secure Node Link...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-ma-slate border-r border-white/5 flex flex-col z-20">
+        <div class="h-16 flex items-center px-6 border-b border-white/5">
+            <span class="text-xl font-display font-bold tracking-tighter">
+                ma<span class="text-ma-indigo">.control</span>
+            </span>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto custom-scroll py-6 space-y-1">
+            <div id="nav-dashboard" onclick="loadSection('dashboard')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium">
+                <i class="fa-solid fa-house-laptop w-6 text-center mr-2"></i> Dashboard
+            </div>
+            
+            <div class="px-6 mt-6 mb-2 text-[10px] font-mono uppercase text-slate-500 tracking-widest">Growth Ops</div>
+            <div id="nav-users" onclick="loadSection('users')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-users-gear w-6 text-center mr-2"></i> Client Base
+            </div>
+            <div id="nav-services" onclick="loadSection('services')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-cubes w-6 text-center mr-2"></i> Service Bundles
+            </div>
+            <div id="nav-leads" onclick="loadSection('leads')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-bolt w-6 text-center mr-2"></i> Leads Monitor
+            </div>
+            <div id="nav-portfolio" onclick="loadSection('portfolio')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-folder-tree w-6 text-center mr-2"></i> Case Library
+            </div>
+
+            <div class="px-6 mt-6 mb-2 text-[10px] font-mono uppercase text-slate-500 tracking-widest">Workflow</div>
+            <div id="nav-orders" onclick="loadSection('orders')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-terminal w-6 text-center mr-2"></i> Active Projects
+            </div>
+            <div id="nav-automation" onclick="loadSection('automation')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-microchip w-6 text-center mr-2"></i> AI Automations
+            </div>
+            <div id="nav-support" onclick="loadSection('support')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-headset w-6 text-center mr-2"></i> Support Hub
+            </div>
+
+            <div class="px-6 mt-6 mb-2 text-[10px] font-mono uppercase text-slate-500 tracking-widest">Finance</div>
+            <div id="nav-payments" onclick="loadSection('payments')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-wallet w-6 text-center mr-2"></i> Revenue
+            </div>
+            <div id="nav-invoices" onclick="loadSection('invoices')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-file-invoice w-6 text-center mr-2"></i> Invoices
+            </div>
+
+            <div class="px-6 mt-6 mb-2 text-[10px] font-mono uppercase text-slate-500 tracking-widest">Platform</div>
+            <div id="nav-blog" onclick="loadSection('blog')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-rss w-6 text-center mr-2"></i> Lab Articles
+            </div>
+            <div id="nav-audit" onclick="loadSection('audit')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-fingerprint w-6 text-center mr-2"></i> Access Logs
+            </div>
+            <div id="nav-settings" onclick="loadSection('settings')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-sliders w-6 text-center mr-2"></i> Parameters
+            </div>
+        </nav>
+
+        <div class="p-4 border-t border-white/5 bg-white/[0.02]">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-ma-indigo/20 flex items-center justify-center text-ma-indigo text-xs border border-ma-indigo/30">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-xs font-bold text-white truncate">Mubashir Arham</p>
+                    <p id="admin-email" class="text-[9px] font-mono text-slate-500 truncate">verifying...</p>
+                </div>
+                <button onclick="handleSignOut()" class="ml-auto w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-rose-500 hover:bg-rose-500/10 transition-colors">
+                    <i class="fa-solid fa-power-off"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col relative overflow-hidden">
+        <header class="h-16 border-b border-white/5 bg-ma-dark/50 backdrop-blur-md flex items-center justify-between px-8 z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full bg-ma-emerald shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                <h1 id="page-title" class="text-xs font-display font-bold tracking-widest uppercase text-slate-400">System_Initialization</h1>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="hidden md:flex flex-col items-end">
+                    <span class="text-[9px] font-mono text-slate-500 uppercase tracking-widest">Network Status</span>
+                    <span class="text-[10px] font-bold text-ma-emerald uppercase tracking-tighter">Secured & Active</span>
+                </div>
+                <button class="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:border-ma-indigo transition-all relative">
+                    <i class="fa-solid fa-bell-concierge"></i>
+                    <span class="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+                </button>
+            </div>
+        </header>
+
+        <div id="admin-content" class="flex-1 overflow-y-auto custom-scroll p-8">
+            <div class="glass-panel rounded-3xl border border-white/5 p-12 text-center text-slate-500 min-h-[500px] flex flex-col items-center justify-center">
+                <i class="fa-solid fa-database fa-fade text-5xl mb-6 text-ma-indigo/40"></i>
+                <h3 class="text-white font-display font-bold text-lg mb-2 uppercase tracking-wider">Synchronizing Node Data</h3>
+                <p class="text-sm text-slate-500 max-w-xs leading-relaxed font-light">Retrieving core administrative parameters from the portfolio ecosystem. Please maintain connection...</p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../assets/js/admin/dashboard.js"></script>
+    <script type="module" src="../assets/js/admin/users.js"></script>
+    <script type="module" src="../assets/js/admin/services.js"></script>
+    <script type="module" src="../assets/js/admin/leads.js"></script>
+    <script type="module" src="../assets/js/admin/portfolio.js"></script>
+    <script type="module" src="../assets/js/admin/orders.js"></script>
+    <script type="module" src="../assets/js/admin/automation.js"></script>
+    <script type="module" src="../assets/js/admin/support.js"></script>
+    <script type="module" src="../assets/js/admin/payments.js"></script>
+    <script type="module" src="../assets/js/admin/invoices.js"></script>
+    <script type="module" src="../assets/js/admin/blog.js"></script>
+    <script type="module" src="../assets/js/admin/audit.js"></script>
+    <script type="module" src="../assets/js/admin/settings.js"></script>
+
+</body>
+</html>

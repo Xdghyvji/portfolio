@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Plans | Mubashir Arham</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config for Custom Colors & Fonts -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#151f32',
+                            900: '#0f172a',
+                        },
+                        indigo: {
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                        },
+                        emerald: {
+                            400: '#34d399',
+                            500: '#10b981',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        /* Custom Styles & Overrides */
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow-x: hidden;
+            cursor: none; /* Hide default cursor for custom one */
+        }
+        
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Custom Magnetic Cursor */
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background-color: #f8fafc;
+            border-radius: 50%;
+            pointer-events: none;
+            mix-blend-mode: difference;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        
+        #cursor.hovered {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(99, 102, 241, 0.8);
+            mix-blend-mode: normal;
+        }
+
+        /* Hide Scrollbar but keep functionality */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6366f1;
+        }
+
+        /* Section Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #818cf8, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-indigo-500 selection:text-white relative">
+
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-indigo-500 to-emerald-500 z-[60] w-0 transition-all duration-75"></div>
+
+    <!-- Custom Cursor -->
+    <div id="cursor" class="hidden md:block"></div>
+
+    <!-- Background Ambient Effects -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-indigo-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-emerald-500/10 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-purple-500/20 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob" style="animation-delay: 4s;"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="fixed w-full top-0 z-50 glass transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-hover">
+                    <a href="index.html" class="font-display font-bold text-xl tracking-widest text-white flex items-center gap-2">
+                        <span class="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center text-sm">MA</span>
+                        MUBASHIR ARHAM
+                    </a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex space-x-6 lg:space-x-8 items-center">
+                    <a href="index.html#home" class="text-sm font-medium text-slate-300 hover:text-white transition-colors cursor-hover">Home</a>
+                    <a href="index.html#about" class="text-sm font-medium text-slate-300 hover:text-white transition-colors cursor-hover">About</a>
+                    <div class="relative group">
+                        <a href="index.html#services" class="text-sm font-medium text-slate-300 hover:text-white transition-colors flex items-center gap-1 cursor-hover">
+                            Services <i class="ph ph-caret-down"></i>
+                        </a>
+                        <!-- Dropdown -->
+                        <div class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-slate-800 ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 glass border border-slate-700">
+                            <div class="py-1" role="menu">
+                                <a href="index.html#services" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white cursor-hover">SMM & SEO</a>
+                                <a href="index.html#services" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white cursor-hover">Web Development</a>
+                                <a href="pricing.html" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white cursor-hover">Pricing Plans</a>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="index.html#portfolio" class="text-sm font-medium text-slate-300 hover:text-white transition-colors cursor-hover">Portfolio</a>
+                    <a href="index.html#testimonials" class="text-sm font-medium text-slate-300 hover:text-white transition-colors cursor-hover">Reviews</a>
+                    <a href="index.html#faq" class="text-sm font-medium text-slate-300 hover:text-white transition-colors cursor-hover">FAQ</a>
+                    
+                    <!-- CTA -->
+                    <a href="index.html#contact" class="ml-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-indigo-500 text-white text-sm font-medium hover:from-indigo-500 hover:to-indigo-400 transition-all shadow-lg shadow-indigo-500/30 transform hover:scale-105 cursor-hover">
+                        Launch Project
+                    </a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-300 hover:text-white focus:outline-none p-2 cursor-hover">
+                        <i class="ph ph-list text-2xl" id="menu-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="fixed inset-0 bg-slate-900/95 backdrop-blur-xl z-40 transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center space-y-6 h-screen w-screen hidden">
+            <a href="index.html#home" class="mobile-link text-2xl font-display font-semibold text-white hover:text-indigo-400">Home</a>
+            <a href="index.html#about" class="mobile-link text-2xl font-display font-semibold text-white hover:text-indigo-400">About</a>
+            <a href="index.html#services" class="mobile-link text-2xl font-display font-semibold text-white hover:text-indigo-400">Services</a>
+            <a href="pricing.html" class="mobile-link text-2xl font-display font-semibold text-white hover:text-indigo-400">Pricing</a>
+            <a href="index.html#portfolio" class="mobile-link text-2xl font-display font-semibold text-white hover:text-indigo-400">Portfolio</a>
+            <a href="index.html#testimonials" class="mobile-link text-2xl font-display font-semibold text-white hover:text-indigo-400">Reviews</a>
+            <a href="index.html#faq" class="mobile-link text-2xl font-display font-semibold text-white hover:text-indigo-400">FAQ</a>
+            <a href="index.html#contact" class="mobile-link mt-8 px-8 py-3 rounded-full bg-indigo-600 text-white text-lg font-medium">Start a Project</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-32 pb-24 relative z-10 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center mb-16 reveal">
+                <h1 class="text-4xl md:text-6xl font-display font-bold text-white mb-6">Service <span class="text-gradient">Bundles</span></h1>
+                <p class="text-lg text-slate-400 max-w-2xl mx-auto">From custom development to AI automation, choose the package that fits your brand's current growth stage.</p>
+            </div>
+
+            <!-- Pricing Bundles Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-24">
+                
+                <!-- Bundle 1: Starter -->
+                <div class="glass-card rounded-3xl p-8 border border-slate-700 reveal cursor-hover flex flex-col">
+                    <div class="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-400 mb-6 border border-emerald-500/30">
+                        <i class="ph ph-rocket-launch text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">The Brand Starter</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow">Essential digital presence and foundational marketing for new businesses.</p>
+                    
+                    <div class="space-y-4 mb-8">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">What's Included:</h4>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3 text-sm text-slate-300"><i class="ph-bold ph-check text-emerald-400 mt-0.5"></i> <strong>Web Dev:</strong> WordPress / Blogger setup</li>
+                            <li class="flex items-start gap-3 text-sm text-slate-300"><i class="ph-bold ph-check text-emerald-400 mt-0.5"></i> <strong>Creative:</strong> Basic Graphic Designing</li>
+                            <li class="flex items-start gap-3 text-sm text-slate-300"><i class="ph-bold ph-check text-emerald-400 mt-0.5"></i> <strong>Marketing:</strong> SMM Panel Integration</li>
+                            <li class="flex items-start gap-3 text-sm text-slate-300"><i class="ph-bold ph-check text-emerald-400 mt-0.5"></i> <strong>SEO:</strong> Foundational On-Page SEO</li>
+                        </ul>
+                    </div>
+                    <a href="index.html#contact" class="w-full block text-center py-4 rounded-xl border border-slate-600 text-white font-medium hover:bg-slate-700 transition">Get Custom Quote</a>
+                </div>
+
+                <!-- Bundle 2: Growth (Highlighted) -->
+                <div class="glass-card rounded-3xl p-8 border border-indigo-500/50 bg-slate-800/80 shadow-[0_0_40px_rgba(99,102,241,0.1)] transform lg:-translate-y-4 reveal cursor-hover relative flex flex-col">
+                    <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-indigo-500 to-emerald-500 rounded-t-3xl"></div>
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-emerald-500 text-white text-xs font-bold px-4 py-1 rounded-full shadow-lg whitespace-nowrap">
+                        MOST POPULAR
+                    </div>
+                    <div class="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center text-indigo-400 mb-6 border border-indigo-500/30 mt-2">
+                        <i class="ph ph-chart-line-up text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-indigo-400 mb-2">E-Com & Growth Engine</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow">Advanced digital architecture and aggressive marketing for scaling brands.</p>
+                    
+                    <div class="space-y-4 mb-8">
+                        <h4 class="text-xs font-bold text-indigo-500 uppercase tracking-wider">What's Included:</h4>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3 text-sm text-white"><i class="ph-bold ph-check text-indigo-400 mt-0.5"></i> <strong>E-Commerce:</strong> Advanced Shopify Development</li>
+                            <li class="flex items-start gap-3 text-sm text-white"><i class="ph-bold ph-check text-indigo-400 mt-0.5"></i> <strong>Marketing:</strong> Full Digital Marketing Strategy</li>
+                            <li class="flex items-start gap-3 text-sm text-white"><i class="ph-bold ph-check text-indigo-400 mt-0.5"></i> <strong>SEO:</strong> High-Authority Backlink Campaigns</li>
+                            <li class="flex items-start gap-3 text-sm text-white"><i class="ph-bold ph-check text-indigo-400 mt-0.5"></i> <strong>Creative:</strong> Premium Video Editing & UI/UX</li>
+                        </ul>
+                    </div>
+                    <a href="index.html#contact" class="w-full block text-center py-4 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 shadow-lg shadow-indigo-500/25 transition">Deploy Engine</a>
+                </div>
+
+                <!-- Bundle 3: Empire -->
+                <div class="glass-card rounded-3xl p-8 border border-slate-700 reveal cursor-hover flex flex-col">
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center text-purple-400 mb-6 border border-purple-500/30">
+                        <i class="ph ph-robot text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">The Automation Empire</h3>
+                    <p class="text-sm text-slate-400 mb-6 flex-grow">Bespoke applications and AI-driven content systems for maximum leverage.</p>
+                    
+                    <div class="space-y-4 mb-8">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">What's Included:</h4>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3 text-sm text-slate-300"><i class="ph-bold ph-check text-purple-400 mt-0.5"></i> <strong>Development:</strong> Mobile App & Custom Web Apps</li>
+                            <li class="flex items-start gap-3 text-sm text-slate-300"><i class="ph-bold ph-check text-purple-400 mt-0.5"></i> <strong>AI Systems:</strong> Prompt Engineering Workflows</li>
+                            <li class="flex items-start gap-3 text-sm text-slate-300"><i class="ph-bold ph-check text-purple-400 mt-0.5"></i> <strong>Automation:</strong> YouTube Cashcow Management</li>
+                            <li class="flex items-start gap-3 text-sm text-slate-300"><i class="ph-bold ph-check text-purple-400 mt-0.5"></i> <strong>Automation:</strong> TikTok Viral Automation</li>
+                        </ul>
+                    </div>
+                    <a href="index.html#contact" class="w-full block text-center py-4 rounded-xl border border-slate-600 text-white font-medium hover:bg-slate-700 transition">Contact For Scale</a>
+                </div>
+
+            </div>
+
+            <!-- Comprehensive Services Catalog -->
+            <div class="reveal mt-32 border-t border-slate-800 pt-16">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-display font-bold text-white mb-4">A La Carte Services Directory</h2>
+                    <p class="text-slate-400">Need a specific skill? I offer specialized expertise across the entire digital spectrum.</p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                    
+                    <!-- Web Dev -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-indigo-500/50 transition-colors">
+                        <i class="ph-fill ph-code text-2xl text-indigo-400"></i>
+                        <span class="text-sm font-medium text-slate-200">Web Development</span>
+                    </div>
+
+                    <!-- Prompt Engineering -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-purple-500/50 transition-colors">
+                        <i class="ph-fill ph-brain text-2xl text-purple-400"></i>
+                        <span class="text-sm font-medium text-slate-200">Prompt Engineering</span>
+                    </div>
+
+                    <!-- Shopify -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-emerald-500/50 transition-colors">
+                        <i class="ph-fill ph-shopping-bag text-2xl text-emerald-400"></i>
+                        <span class="text-sm font-medium text-slate-200">Shopify Development</span>
+                    </div>
+
+                    <!-- YouTube Automation -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-red-500/50 transition-colors">
+                        <i class="ph-fill ph-youtube-logo text-2xl text-red-500"></i>
+                        <span class="text-sm font-medium text-slate-200">YouTube Automation</span>
+                    </div>
+
+                    <!-- Mobile App -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-indigo-500/50 transition-colors">
+                        <i class="ph-fill ph-device-mobile text-2xl text-indigo-400"></i>
+                        <span class="text-sm font-medium text-slate-200">Mobile App Dev</span>
+                    </div>
+
+                    <!-- Digital Marketing -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-orange-500/50 transition-colors">
+                        <i class="ph-fill ph-megaphone text-2xl text-orange-400"></i>
+                        <span class="text-sm font-medium text-slate-200">Digital Marketing</span>
+                    </div>
+
+                    <!-- SEO -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-emerald-500/50 transition-colors">
+                        <i class="ph-fill ph-magnifying-glass text-2xl text-emerald-400"></i>
+                        <span class="text-sm font-medium text-slate-200">Advanced SEO</span>
+                    </div>
+
+                    <!-- TikTok Automation -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-pink-500/50 transition-colors">
+                        <i class="ph-fill ph-tiktok-logo text-2xl text-pink-500"></i>
+                        <span class="text-sm font-medium text-slate-200">TikTok Automation</span>
+                    </div>
+
+                    <!-- WordPress -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-blue-500/50 transition-colors">
+                        <i class="ph-fill ph-wordpress-logo text-2xl text-blue-400"></i>
+                        <span class="text-sm font-medium text-slate-200">WordPress Setup</span>
+                    </div>
+
+                    <!-- Video Editing -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-indigo-500/50 transition-colors">
+                        <i class="ph-fill ph-video-camera text-2xl text-indigo-400"></i>
+                        <span class="text-sm font-medium text-slate-200">Video Editing</span>
+                    </div>
+
+                    <!-- Graphic Designing -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-purple-500/50 transition-colors">
+                        <i class="ph-fill ph-paint-brush-broad text-2xl text-purple-400"></i>
+                        <span class="text-sm font-medium text-slate-200">Graphic Designing</span>
+                    </div>
+
+                    <!-- SMM -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-blue-400/50 transition-colors">
+                        <i class="ph-fill ph-share-network text-2xl text-blue-400"></i>
+                        <span class="text-sm font-medium text-slate-200">SMM Management</span>
+                    </div>
+
+                    <!-- E-Commerce -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-emerald-500/50 transition-colors">
+                        <i class="ph-fill ph-storefront text-2xl text-emerald-400"></i>
+                        <span class="text-sm font-medium text-slate-200">E-Commerce Logic</span>
+                    </div>
+
+                    <!-- Blogger -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-orange-500/50 transition-colors">
+                        <i class="ph-fill ph-article text-2xl text-orange-400"></i>
+                        <span class="text-sm font-medium text-slate-200">Blogger / CMS</span>
+                    </div>
+                    
+                    <!-- UI/UX Design -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-indigo-500/50 transition-colors">
+                        <i class="ph-fill ph-figma-logo text-2xl text-indigo-400"></i>
+                        <span class="text-sm font-medium text-slate-200">UI/UX Design</span>
+                    </div>
+
+                    <!-- API Integration -->
+                    <div class="glass-card p-4 rounded-xl flex items-center gap-3 cursor-hover border border-slate-700/50 hover:border-purple-500/50 transition-colors">
+                        <i class="ph-fill ph-plugs-connected text-2xl text-purple-400"></i>
+                        <span class="text-sm font-medium text-slate-200">API Integration</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Custom Project Banner -->
+            <div class="mt-20 glass-card rounded-3xl p-8 md:p-12 border border-indigo-500/30 bg-gradient-to-br from-slate-800 to-indigo-900/40 text-center reveal">
+                <h3 class="text-2xl md:text-3xl font-display font-bold text-white mb-4">Don't see an exact fit?</h3>
+                <p class="text-slate-300 max-w-2xl mx-auto mb-8">Every business is unique. We can create a custom retainer specifically mixing development, marketing, and automation to hit your KPIs.</p>
+                <a href="index.html#contact" class="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-slate-900 font-bold hover:bg-indigo-50 transition-colors shadow-lg cursor-hover">
+                    Build Custom Package <i class="ph-bold ph-arrow-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Floating UI Controls -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
+        <!-- Floating WhatsApp Button -->
+        <a href="https://wa.me/923701722964" target="_blank" class="bg-[#25D366] text-white w-14 h-14 rounded-full shadow-lg shadow-[#25D366]/30 hover:scale-110 hover:bg-[#20b858] transition-all duration-300 cursor-hover flex items-center justify-center group">
+            <i class="ph-fill ph-whatsapp-logo text-3xl"></i>
+            <span class="absolute right-16 bg-slate-800 text-white text-xs font-semibold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-slate-700">Chat with me</span>
+        </a>
+    </div>
+
+    <!-- Back to Top Button (Bottom Left) -->
+    <button id="back-to-top" class="fixed bottom-6 left-6 z-50 bg-slate-800 text-indigo-400 w-12 h-12 rounded-full shadow-lg border border-slate-700 hover:bg-indigo-600 hover:text-white hover:border-indigo-500 transition-all duration-300 cursor-hover flex items-center justify-center opacity-0 pointer-events-none translate-y-10 group">
+        <i class="ph-bold ph-arrow-up text-xl group-hover:-translate-y-1 transition-transform"></i>
+    </button>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-slate-900 pt-16 pb-8 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                
+                <!-- Col 1: Brand -->
+                <div>
+                    <a href="index.html" class="font-display font-bold text-xl tracking-widest text-white flex items-center gap-2 mb-4 cursor-hover">
+                        <span class="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center text-sm">MA</span>
+                        MUBASHIR ARHAM
+                    </a>
+                    <p class="text-slate-400 text-sm mb-6">18-year-old entrepreneur architecting the digital future. Based in Pakistan, operating globally.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/mubashirthevideoeditor" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition cursor-hover"><i class="ph-fill ph-facebook-logo text-xl"></i></a>
+                        <a href="https://github.com/Xdghyvji" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition cursor-hover"><i class="ph-fill ph-github-logo text-xl"></i></a>
+                        <a href="https://www.instagram.com/get_grow_up/" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-pink-600 transition cursor-hover"><i class="ph-fill ph-instagram-logo text-xl"></i></a>
+                        <a href="https://wa.me/923701722964" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-[#25D366] transition cursor-hover"><i class="ph-fill ph-whatsapp-logo text-xl"></i></a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Quick Links -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase tracking-wider text-sm">Navigation</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html#home" class="text-slate-400 hover:text-indigo-400 text-sm transition cursor-hover">Home</a></li>
+                        <li><a href="index.html#about" class="text-slate-400 hover:text-indigo-400 text-sm transition cursor-hover">About Story</a></li>
+                        <li><a href="index.html#services" class="text-slate-400 hover:text-indigo-400 text-sm transition cursor-hover">Service Ecosystem</a></li>
+                        <li><a href="index.html#portfolio" class="text-slate-400 hover:text-indigo-400 text-sm transition cursor-hover">Case Studies</a></li>
+                        <li><a href="index.html#insights" class="text-slate-400 hover:text-indigo-400 text-sm transition cursor-hover">The Lab Blog</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Ventures -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase tracking-wider text-sm">Ventures</h4>
+                    <ul class="space-y-4">
+                        <li>
+                            <a href="https://www.instagram.com/get_grow_up/" target="_blank" class="group flex items-center gap-3 cursor-hover">
+                                <div class="w-8 h-8 rounded bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition">
+                                    <i class="ph ph-trend-up"></i>
+                                </div>
+                                <span class="text-slate-400 group-hover:text-white text-sm transition">Get Grow Up</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://digitalserviceshub.online" target="_blank" class="group flex items-center gap-3 cursor-hover">
+                                <div class="w-8 h-8 rounded bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition">
+                                    <i class="ph ph-globe"></i>
+                                </div>
+                                <span class="text-slate-400 group-hover:text-white text-sm transition">Digital Services Hub</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Legal / Contact -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase tracking-wider text-sm">Legal & Contact</h4>
+                    <ul class="space-y-2 mb-4">
+                        <li><a href="privacypolicy.html" class="text-slate-400 hover:text-white text-sm transition cursor-hover">Privacy Policy</a></li>
+                        <li><a href="termsofservice.html" class="text-slate-400 hover:text-white text-sm transition cursor-hover">Terms of Service</a></li>
+                    </ul>
+                    <a href="mailto:mubashirarham12@gmail.com" class="text-slate-400 hover:text-white text-sm flex items-center gap-2 cursor-hover transition">
+                        <i class="ph ph-envelope-simple"></i> mubashirarham12@gmail.com
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between">
+                <p class="text-slate-500 text-sm mb-4 md:mb-0">
+                    &copy; 2026 Mubashir Arham. Handcrafted in Pakistan.
+                </p>
+                <div class="flex items-center gap-2 bg-slate-800 rounded-full px-4 py-1.5 border border-slate-700">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-xs font-medium text-slate-300 tracking-wide uppercase">Available for Work</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // --- Custom Cursor Logic ---
+        const cursor = document.getElementById('cursor');
+        const hoverElements = document.querySelectorAll('.cursor-hover, a, button, summary');
+
+        if(window.innerWidth > 768) {
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+
+            hoverElements.forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+            });
+        }
+
+        // --- Mobile Menu Toggle ---
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('hidden');
+            setTimeout(() => {
+                mobileMenu.classList.toggle('translate-x-full');
+            }, 10);
+            
+            if(menuIcon.classList.contains('ph-list')) {
+                menuIcon.classList.remove('ph-list');
+                menuIcon.classList.add('ph-x');
+            } else {
+                menuIcon.classList.remove('ph-x');
+                menuIcon.classList.add('ph-list');
+            }
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+
+        // --- Scroll Utilities: Navbar, Progress Bar, Back to Top ---
+        const navbar = document.getElementById('navbar');
+        const progressBar = document.getElementById('scroll-progress');
+        const backToTopBtn = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            
+            // Navbar Shadow
+            if (winScroll > 50) {
+                navbar.classList.add('shadow-lg');
+            } else {
+                navbar.classList.remove('shadow-lg');
+            }
+
+            // Scroll Progress Bar
+            const scrolled = Math.min((winScroll / height) * 100, 100);
+            progressBar.style.width = scrolled + '%';
+
+            // Back to Top Button Visibility
+            if (winScroll > 600) {
+                backToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-10');
+            } else {
+                backToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-10');
+            }
+        });
+
+        // Back to Top Action
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // --- Scroll Reveal Animation ---
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal(); // Trigger on load
+    </script>
+</body>
+</html>
