@@ -148,12 +148,12 @@
 
         window.loadSection = (sectionName) => {
             document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('bg-indigo-500/10', 'text-indigo-400', 'border-r-2', 'border-indigo-500');
+                el.classList.remove('bg-ma-indigo/10', 'text-ma-indigo', 'border-r-2', 'border-ma-indigo');
                 el.classList.add('text-slate-400', 'hover:text-white');
             });
             const activeLink = document.getElementById(`nav-${sectionName}`);
             if(activeLink) {
-                activeLink.classList.add('bg-indigo-500/10', 'text-indigo-400', 'border-r-2', 'border-indigo-500');
+                activeLink.classList.add('bg-ma-indigo/10', 'text-ma-indigo', 'border-r-2', 'border-ma-indigo');
                 activeLink.classList.remove('text-slate-400', 'hover:text-white');
             }
 
@@ -186,7 +186,7 @@
     </script>
 
     <style>
-        body { background-color: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        body { background-color: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; overflow: hidden; }
         h1, h2, h3, .font-display { font-family: 'Lexend', sans-serif; }
         .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .custom-scroll::-webkit-scrollbar { width: 5px; }
@@ -242,6 +242,10 @@
             <div id="nav-leads" onclick="loadSection('leads')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
                 <i class="fa-solid fa-bolt w-6 text-center mr-2"></i> Leads Monitor
             </div>
+            <!-- NEW BROADCAST ENGINE LINK -->
+            <div id="nav-campaigns" onclick="loadSection('campaigns')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-satellite-dish w-6 text-center mr-2"></i> Broadcast Engine
+            </div>
             <div id="nav-portfolio" onclick="loadSection('portfolio')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
                 <i class="fa-solid fa-folder-tree w-6 text-center mr-2"></i> Case Library
             </div>
@@ -255,6 +259,10 @@
             </div>
             <div id="nav-support" onclick="loadSection('support')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
                 <i class="fa-solid fa-headset w-6 text-center mr-2"></i> Support Hub
+            </div>
+            
+            <div id="nav-chat" onclick="loadSection('chat')" class="nav-item w-full flex items-center px-6 py-3 text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-comments w-6 text-center mr-2"></i> Direct Chat
             </div>
 
             <div class="px-6 mt-6 mb-2 text-[10px] font-mono uppercase text-slate-500 tracking-widest">Finance</div>
@@ -321,14 +329,19 @@
         </div>
     </main>
 
+    <!-- All Admin Script Modules -->
     <script type="module" src="../assets/js/admin/dashboard.js"></script>
     <script type="module" src="../assets/js/admin/users.js"></script>
     <script type="module" src="../assets/js/admin/services.js"></script>
     <script type="module" src="../assets/js/admin/leads.js"></script>
+    <!-- Broadcast Engine Module Added -->
+    <script type="module" src="../assets/js/admin/campaigns.js"></script>
     <script type="module" src="../assets/js/admin/portfolio.js"></script>
     <script type="module" src="../assets/js/admin/orders.js"></script>
     <script type="module" src="../assets/js/admin/automation.js"></script>
     <script type="module" src="../assets/js/admin/support.js"></script>
+    <script type="module" src="../assets/js/admin/chat.js"></script>
+    
     <script type="module" src="../assets/js/admin/payments.js"></script>
     <script type="module" src="../assets/js/admin/invoices.js"></script>
     <script type="module" src="../assets/js/admin/blog.js"></script>

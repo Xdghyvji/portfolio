@@ -1,0 +1,61 @@
+User-agent: *
+Allow: /
+Allow: /assets/img/
+Allow: /assets/js/
+Allow: /assets/css/
+Disallow: /admin/
+Disallow: /client/
+Disallow: /.netlify/
+Disallow: /api/
+Disallow: /assets/docs/
+Disallow: /login.html
+Disallow: /.json$
+Disallow: /.md$
+Disallow: /.env$
+Disallow: /.sql$
+Disallow: /cgi-bin/
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /package.json
+Disallow: /package-lock.json
+
+User-agent: GPTBot
+Disallow: /admin/
+Disallow: /client/
+Disallow: /.netlify/
+Disallow: /assets/docs/
+
+User-agent: ChatGPT-User
+Disallow: /admin/
+Disallow: /client/
+Disallow: /.netlify/
+Disallow: /assets/docs/
+
+User-agent: Google-Extended
+Disallow: /admin/
+Disallow: /client/
+Disallow: /.netlify/
+Disallow: /assets/docs/
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /admin/
+Disallow: /client/
+Disallow: /.netlify/
+Disallow: /assets/docs/
+
+User-agent: Claude-Web
+Disallow: /admin/
+Disallow: /client/
+Disallow: /.netlify/
+Disallow: /assets/docs/
+
+User-agent: Omgilibot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+Sitemap: https://www.google.com/search?q=https://digitalserviceshub.online/sitemap.xml

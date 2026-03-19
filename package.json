@@ -1,0 +1,15 @@
+{
+  "name": "ma-digital-control-center",
+  "version": "1.0.0",
+  "description": "Full-Stack Portfolio, Admin Command Center, and Client Portal for Mubashir Arham",
+  "scripts": {
+    "build": "npm install"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.2.1",
+    "resend": "^3.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

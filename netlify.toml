@@ -1,0 +1,23 @@
+[build]
+  # The directory where your static HTML/CSS/JS files are located (Root)
+  publish = "."
+  # The directory where your backend serverless functions are located
+  functions = "netlify/functions"
+  # Command to install Node modules for your serverless functions
+  command = "npm install"
+
+[functions]
+  # Specify the Node.js version for your serverless functions
+  node_bundler = "esbuild"
+
+# Optional: Clean URL Routing for your backend APIs
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Optional: Handle 404s gracefully
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 404
