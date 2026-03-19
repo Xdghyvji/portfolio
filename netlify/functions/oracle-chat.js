@@ -1,8 +1,7 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// Initialize the Gemini Engine
-// NOTE: Hardcoded for initial deployment. Move to process.env.GEMINI_API_KEY for production.
-const genAI = new GoogleGenerativeAI("AIzaSyCDcg1N4T7tUQSexfouqTpot5UaP-pBDNI");
+// Initialize the Gemini Engine securely using the Environment Variable
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 exports.handler = async (event, context) => {
     // CORS Headers for secure cross-origin requests

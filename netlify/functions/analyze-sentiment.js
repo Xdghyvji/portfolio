@@ -1,8 +1,7 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// Initialize Gemini 2.5 Flash
-// NOTE: Hardcoded for initial deployment. Move to process.env.GEMINI_API_KEY in production.
-const genAI = new GoogleGenerativeAI("AIzaSyCDcg1N4T7tUQSexfouqTpot5UaP-pBDNI");
+// Securely initialize Gemini pulling from your .env file
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 exports.handler = async (event, context) => {
     // CORS Headers

@@ -1,9 +1,9 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { Resend } = require("resend");
 
-// Initialize APIs (Move to process.env in production)
-const genAI = new GoogleGenerativeAI("AIzaSyCDcg1N4T7tUQSexfouqTpot5UaP-pBDNI");
-const resend = new Resend("re_P4SvFN5Z_BkWw2wVvAL6cvLXqwi117XB3");
+// Initialize APIs securely using Environment Variables
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 exports.handler = async (event, context) => {
     // CORS Headers
